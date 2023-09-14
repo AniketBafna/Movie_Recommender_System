@@ -1,80 +1,75 @@
-
 import streamlit as st
-import pickle
-import pandas as pd
-import requests
-
-def fetch_poster(movie_id):
-    url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
-    data = requests.get(url)
-    data = data.json()
-    poster_path = data['poster_path']
-    full_path = "https://image.tmdb.org/t/p/w500/" + poster_path
-    return full_path
+from PIL import Image
 
 
+from model import model
 
-def recommend(movie):
-    index = movies[movies['title']==movie].index[0]
-    distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x:x[1])
+def main():
 
-    recommended_movies_names = []
-    recommended_movies_posters = []
-    recommended_movies_rating = []
-    recommended_movies_year = []
-    recommended_movies_runtime = []
+	with st.sidebar:
+		choice = st.radio(
+			"Choose:",
+			("Home"," :blue[_Movie Recommender System Model_]", "About Me")
+		)
+	#menu = ["Prediction Section", "About"]
+	#choice = st.sidebar.selectbox("Menu",menu)
 
-    for i in distances[1:6]:
-        movie_id = movies.iloc[i[0]].movie_id
-        # fetch poster from api
-        recommended_movies_posters.append(fetch_poster(movie_id))
-        recommended_movies_names.append(movies.iloc[i[0]].title)
-        recommended_movies_rating.append(movies.iloc[i[0]].vote_average)
-        recommended_movies_year.append(movies.iloc[i[0]].release_year)
-        recommended_movies_runtime.append(movies.iloc[i[0]].runtime)
+	if choice == "Home":
+		st.subheader(" What is Movie Recommender System :question:", divider="rainbow")
 
-    return recommended_movies_names, recommended_movies_posters, recommended_movies_year, recommended_movies_runtime,recommended_movies_rating
+		img1 = Image.open("image.png")
+		st.image(img1, caption="Movie Recommender System")
+		st.text("""Movie recommender systems are intelligent algorithms that suggest movies for users to watch based on their previous viewing behavior & 
+preferences. These systems analyze data such as users' ratings, reviews, & viewing histories to generate personalized recommendations. Movie 
+recommender system has revolutionized the way people discover & consume movies, enabling users to navigate through vast catalogs of films 
+more efficiently. Recommender systems have two main categories: content-based & collaborative filtering. Content-based movie recommendation 
+system algorithms use the similarities between movies to recommend new movies to users, while collaborative filtering utilizes other users'
+overlapping movie ratings to generate recommendations. Overall, the movie recommender system has become an essential tool for movie 
+enthusiasts seeking to discover new films.""")
 
-movies_dict = pickle.load(open('movie_dict.pkl','rb'))
-movies = pd.DataFrame(movies_dict)
+	elif choice == " :blue[_Movie Recommender System Model_]":
+		model()
 
-similarity = pickle.load(open('similarity.pkl','rb'))
+	else:
+	#st.subheader("About")
+		
+		st.write(" ## :star2: Aniket Narpatraj Bafna :star2:")
+		st.write(" #### :male-technologist: Data Scientist :male-technologist:")
+		img = Image.open("aniket.jpeg")
+		st.image(img, caption="Aniket Bafna", width=300)
 
-st.title('Movie Recommender System :camera:')
-movie_list = movies['title'].values
-selected_movie = st.selectbox('Search Movie', movie_list)
+		st.text("""
+		Highly motivated and results-driven Self Taught Data Scientist with over 2 year of hands-on experience in the field of Machine Learning, 
+		Natural Language Processing (NLP), Data Visualization, Data Processing, Tableau, Power BI, Statistics, and more.
 
-if st.button('Show Recommendation'):
-    st.write("Top 5 on list")
-    recommended_movie_names,recommended_movie_posters, recommended_movies_year, recommended_movies_runtime, recommended_movies_rating = recommend(selected_movie)
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.image(recommended_movie_posters[0])
-        st.subheader(recommended_movie_names[0])
-        st.write("Release : ",recommended_movies_year[0])
-        st.write("Runtime : ", recommended_movies_runtime[0])
-        st.write(":star: ", recommended_movies_rating[0])
-    with col2:
-        st.image(recommended_movie_posters[1])
-        st.subheader(recommended_movie_names[1])
-        st.write("Release : ",recommended_movies_year[1])
-        st.write("Runtime : ", recommended_movies_runtime[1])
-        st.write(":star: ",recommended_movies_rating[1])
-    with col3:
-        st.image(recommended_movie_posters[2])
-        st.subheader(recommended_movie_names[2])
-        st.write("Release : ",recommended_movies_year[2])
-        st.write("Runtime : ", recommended_movies_runtime[2])
-        st.write(":star: ", recommended_movies_rating[2])
-    with col4:
-        st.image(recommended_movie_posters[3])
-        st.subheader(recommended_movie_names[3])
-        st.write("Release : ",recommended_movies_year[3])
-        st.write("Runtime : ", recommended_movies_runtime[3])
-        st.write(":star: ", recommended_movies_rating[3])
-    with col5:
-        st.image(recommended_movie_posters[4])
-        st.subheader(recommended_movie_names[4])
-        st.write("Release : ",recommended_movies_year[4])
-        st.write("Runtime : ", recommended_movies_runtime[4])
-        st.write(":star: ",recommended_movies_rating[4])
+		I am passionately dedicated to harnessing the power of data to derive actionable insights and have an unwavering commitment to professional 
+		growth, adaptability, and collaborative teamwork. I bring a strong analytical mindset and a passion for continuous learning to every project.
+
+		As a highly adaptable and growth-oriented individual, I am keen to seize new opportunities that allow me to broaden my skill set, learn 
+		from diverse experiences, and contribute to impactful data-driven initiatives. My collaborative spirit and insatiable curiosity make me 
+		a valuable asset in the fast-evolving world of data science, where innovation and problem-solving are paramount. I am excited to embark on 
+		new ventures that push the boundaries of what is possible through data-driven insights and solutions.
+
+		I love meeting people working on exciting things. If there is any suitable role for me, don't hesitate. 
+		I am open to communication on all channels. 
+		Let's discuss.
+""")
+		socials = ["LinkedIn", "Github", "Gmail"]
+		linkedin = "http://www.linkedin.com/in/aniket-bafna"
+		github = "https://github.com/AniketBafna"
+		mail = "aniketbafna0@gmail.com"
+		Tableau = ""
+		with st.expander("Links to all my Socials"):
+			a = st.selectbox("Socials", socials)
+			if a =="LinkedIn":
+				st.write(linkedin)
+			elif a =="Github":
+				st.write(github)
+			elif a=="Gmail":
+				st.write(mail)
+
+main()
+
+
+
+
